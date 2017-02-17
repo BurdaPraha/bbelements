@@ -1,4 +1,4 @@
 .idea
 node_modules
-*.min.js
+dist/*
 *.log
