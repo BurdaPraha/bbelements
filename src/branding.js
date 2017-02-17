@@ -1,63 +1,133 @@
-function createBranding(optionsObject)
-{
-    var defaults = {
-        type: '',
-        creative_first: '',
-        creative_second: '',
-        creative_megaboard: {
-            file: '',
-            width: 970,
-            height: 120 
+createBranding({
+    type: 'anicka',
+    creative: {
+        first: {
+            file: 'branding1700x200.jpg'
         },
-        promotion_word: 'Promotion',
-        promotion_height: 15,
-        drupal_toolbar_height: 80,
-        main_bg_options: '',
-        background_color: '#fff',
-        branding_width: 1700,
-        branding_height: 1200,
-        megaboard_height: 70,
-        page_width: 980,
+        megaboard: {
+            file: '765517/index.html',
+            width: 700,
+            height: 120
+        },
+        background_color: '#fff'
+    }
+});
+
+/**
+ * Create css factory, todo: Object.keys(cssObject).reduce(fn, default)
+ * @param cssObject
+ * @returns {string}
+ */
+function generateCSS(cssObject)
+{
+    var css = '';
+    for (cName in cssObject)
+    {
+        // create new class
+        css += '.' + cName + '{';
+
+        // class properties
+        for(cProperty in cssObject[cName])
+        {
+            // for classes like: 'font-size' we must using 'font_size' in object and replacing it here
+            var property = cProperty.replace('_', '-');
+
+            // create row
+            css += property + ':' + cssObject[cName][cProperty] + ';';
+        }
+
+        // end of class
+        css += '}';
+    }
+    return css;
+}
+
+/**
+ * Create branding factory
+ * @param myOptions object
+ */
+function createBranding(myOptions)
+{
+    const defaultOptions = [{
+        type: '',
+        creative: {
+            first: {
+                file: '',
+                width: 1700,
+                height: 1200                
+            },
+            second: {
+                file: '',
+                width: 1700,
+                height: 1200
+            },
+            megaboard: {
+                file: '',
+                width: 970,
+                height: 120
+            },
+            background_color: '#fff',
+            background_options: ''
+        },
+        tools: {
+            pr_word: 'Promotion',
+            pr_height: 15,
+            drupal_toolbar_height: 80
+        },
+        page_width: 980, // @todo: think about dynamic looking
         element_class: 'branding_wrapper',
         tpl_shared: true,
         css: '',
         html: ''
-    };
+    }];
     
-    // merge options
-    var args = Object.assign(defaults, optionsObject);
+    // merge options - todo: bug!!
+    //var args = Object.assign(myOptions, defaultOptions);
+
+    const args = Object.assign({}, defaultOptions, myOptions);
+
+    console.log(args);
     
     // vyska odsazeni webu
-    args.megaboard_height += args.promotion_height;
+    args.creative.megaboard.height += args.tools.pr_height;
     
     // allowed with superpowers
     switch(args.type)
     {
         // without action
         case 'anicka':
-            args.main_bg_options = 'no-repeat center ' + args.promotion_height + 'px'; 
+            args.creative.background_options = 'no-repeat center ' + args.tools.pr_height + 'px'; 
         break;
         
         // fixed bg
         case 'maruska':
-            args.main_bg_options = 'no-repeat fixed center ' + args.promotion_height + 'px'; 
+            args.creative.background_options = 'no-repeat fixed center ' + args.tools.pr_height + 'px'; 
         break;
             
         // auto replicated
         case 'zuzanka':
-            args.promotion_height = 10;
-            args.main_bg_options = 'repeat-y center ' + args.promotion_height + 'px';
+            args.tools.pr_height = 10;
+            args.creative.background_options = 'repeat-y center ' + args.tools.pr_height + 'px';
         break;
             
         // with HTML banner to header
         case 'amalka':
         
             // check if valid
-            if('' == args.creative_megaboard.file || args.creative_megaboard.file.indexOf('.html') !== -1){return alert('Please fill in creative_megaboard item file')};
+            if('' == args.creative.megaboard.file || args.creative.megaboard.file.indexOf('.html') !== -1){return alert('Please fill in creative.megaboard item file')};
             
-            args.css+= '.branding__megaboard {}';
-            
-            args.html+='<div class="branding__megaboard"><iframe src="%%URL%%' + args.creative_megaboard.file + '?redir=%%__REDIRECT_ENCODED%%&bbtarget=_blank" width="' + args.creative_megaboard.width + '" height="' + args.creative_megaboard.height + '" scrolling="no" style="margin:0px; border:0px" seamless></iframe>';
+            args.css+= '' +
+                '.branding__megaboard iframe {margin:0px; border:0px}';
+            args.html+='' +
+                '<div class="branding__megaboard">' +
+                '<iframe ' +
+                        'src="%%URL%%' + args.creative.megaboard.file + '?redir=%%__REDIRECT_ENCODED%%&bbtarget=_blank" ' +
+                        'width="' + args.creative.megaboard.width + '" ' +
+                        'height="' + args.creative.megaboard.height + '" ' +
+                        'scrolling="no" ' +
+                        'seamless>' +
+                '</iframe>' +
+                '</div>';
             
         break;
             
@@ -66,8 +136,8 @@ function createBranding(optionsObject)
             
             var backgroundDoubleLayerOptions = {
                 impressionTrackingUrl: '',
-                firstImageUrl:  '%%__URL%%' + args.creative_first,
-                secondImageUrl: '%%__URL%%' + args.creative_second,
+                firstImageUrl:  '%%__URL%%' + args.creative.first,
+                secondImageUrl: '%%__URL%%' + args.creative.second,
                 clickUrl:       '%%__REDIRECT%%',
                 background: {
                   position: 'center top',
@@ -114,15 +184,10 @@ function createBranding(optionsObject)
     
     if(element.length)
     {
-        // bbelements vars - todo: is this useful?
-        var bb_redirection  = '%%__REDIRECT%%';
-        var bb_img          = '%%__BANNER%%';
-        var bb_title        = '%%__TITLE%%';
-        var bb_target       = '%%__TARGET%%';
-        var bb_border       = '%%__BORDER%%';
+        console.log(args.creative.first);
 
         // calculating
-        var bb_WidthR       = ((args.branding_width - args.page_width) / 2);
+        var bb_WidthR       = ((args.creative.first.width - args.page_width) / 2);
         var bb_mRight       = bb_WidthR + args.page_width;
         var bb_tempWidth    = (( window.innerWidth - args.page_width) / 2) - 15;
         bb_tempWidth        = bb_tempWidth > bb_WidthR ? bb_WidthR : bb_tempWidth;
@@ -132,38 +197,100 @@ function createBranding(optionsObject)
         
         if(args.tpl_shared)
         {
-            element[0].style.background = (args.background_color ? args.background_color : '') + ' url("%%URL%%'+ args.creative_first +'") ' + args.main_bg_options;
+            element[0].style.background = (args.creative.background_color ? args.creative.background_color : '') + ' url("%%URL%%'+ args.creative.first.file +'") ' + args.creative.background_options;
+            
+            var cssObject = {
+                'branding': {
+                    width:      args.page_width + 'px',
+                    height:     + args.creative.megaboard.height + 'px',
+                    position:   'relative',
+                    margin:     '0 auto'
+                },
+                branding__promotion: {
+                    width:      '100%',
+                    height:     '12px',
+                    background: '#fff',
+                    position:   'absolute',
+                    top:        '-61px',
+                    padding:    '3px 0 0',
+                    color:      '#666',
+                    fontSize:   '10px',
+                    line_height: '10px',
+                    text_align:  'left'
+                },
+                branding__bb3: {
+                    width:      args.page_width + 'px',
+                    height:     args.creative.megaboard.height + 'px',
+                    position:   'fixed',
+                    float:      'left',
+                    outline:    'none'
+                },
+                branding__bb4: {
+                    width:      bb_WidthR + 'px',
+                    height:     args.branding_height + 'px',
+                    position:   'absolute',
+                    top:        0,
+                    left:       '-' + bb_WidthR + 'px'
+                },
+                branding__bb5: {
+                    width:      '100%',
+                    height:     '12px',
+                    background: '#fff',
+                    position:   'absolute',
+                    top:        '-61px',
+                    padding:    '3px 0 0;'
+                },
+                branding__bb6: {
+                    width:      bb_WidthR + 'px',
+                    height:     args.branding_height + 'px',
+                    position:   'fixed',
+                    float:      'left',
+                    outline:    'none'
+                },
+                branding__bb7: {
+                    width:      bb_tempWidth +'px',
+                    height:     args.branding_height + 'px',
+                    position:   'absolute',
+                    top:        0,
+                    left:       args.page_width + 'px'
+                },
+                branding__bb8: {
+                    width:      '100%',
+                    height:     '12px',
+                    background: '#fff',
+                    position:   'absolute',
+                    top:        '-61px',
+                    padding:    '3px 0 0'
+                },
+                branding__bb9: {
+                    width:      bb_tempWidth + 'px',
+                    height:     args.branding_height + 'px',
+                    position:   'fixed',
+                    float:      'left',
+                    outline:    'none'
+                }
+            };
 
-            // tpl
-            var css = ""
-                + ".branding {width:" + args.page_width + "px; height:" + args.megaboard_height + "px; position:relative; margin:0 auto;}"
-                + args.css +
-                + ".branding__promotion {width:100%; height:12px; background:#fff; position:absolute; top:-61px; padding:3px 0 0; color:#666; font-size:10px; line-height:10px; text-align:left;}"
-                + "._bb3 {width:" + args.page_width + "px; height:" + args.megaboard_height + "px; position:fixed; float:left; outline:none;}"
-                + "._bb4 {width:" + bb_WidthR + "px; height:" + args.branding_height + "px; position:absolute; top:0px; left:-" + bb_WidthR + "px;}"
-                + "._bb5 {width:100%; height:12px; background:#fff; position:absolute; top:-61px; padding:3px 0 0;}"
-                + "._bb6 {width:" + bb_WidthR + "px;height:" + args.branding_height + "px; position:fixed; float:left; outline:none;}"
-                + "._bb7 {width:" + bb_tempWidth +"px; height:" + args.branding_height + "px; position:absolute; top:0px; left:" + args.page_width + "px;}"
-                + "._bb8 {width:100%; height:12px; background:#fff; position:absolute; top:-61px; padding:3px 0 0;}"
-                + "._bb9 {width:" + bb_tempWidth + "px; height:" + args.branding_height + "px; position:fixed; float:left; outline:none;}";
+            var css = generateCSS(cssObject);
+            console.log(css);
 
             var html = ""
                 + "<div class='branding branding__" + args.type + "'>"
-                //+ "<div class='branding__promotion'>"+args.promotion_word+"</div>"
-                + args.html +    
-                + "<a class='_bb3' href='%%__REDIRECT%%' target='_blank'></a>"
-                + "<div class='_bb4'>"
-                + "<div class='_bb5'>"
-                + "<a class='_bb6' href='%%__REDIRECT%%' target='_blank'></a>"
-                + "</div>"
-                + "<div class='_bb7 branding__right'>"
-                + "<div style='_bb8'></div>"
-                + "<a class='_bb9 branding__right' href='%%__REDIRECT%%' target='_blank'></a>"
-                + "</div>"
+                    + "<div class='branding__promotion'>"+args.tools.pr_word+"</div>"/* + args.html + */
+                    + "<a class='branding__bb3' href='%%__REDIRECT%%' target='_blank'></a>"
+                    + "<div class='branding__bb4'>"
+                        + "<div class='branding__bb5'>"
+                            + "<a class='branding__bb6' href='%%__REDIRECT%%' target='_blank'></a>"
+                        + "</div>"
+                        + "<div class='branding__bb7 branding__right'>"
+                        + "<div style='branding__bb8'></div>"
+                            + "<a class='branding__bb9 branding__right' href='%%__REDIRECT%%' target='_blank'></a>"
+                        + "</div>"
+                    + "</div>"
                 + "</div>";
 
             // print it!
-            document.write('<!-- start BB CSS --><style>'+css+'</style><!-- end BB CSS --><!-- start BB HTML -->'+html+'<!-- end BB HTML -->');
+            document.write('<!-- start BurdaDigital BB --><style>'+css+'</style>'+html+'<!-- end BurdaDigital BB -->');
         }
 
         // onresize actions
@@ -178,7 +305,7 @@ function createBranding(optionsObject)
             // if is admin logged
             if(document.body.classList.contains("toolbar-horizontal"))
             {
-                document.body.style.backgroundPosition = 'center '+(args.promotion_height + args.drupal_toolbar_height)+'px';
+                document.body.style.backgroundPosition = 'center ' + ( args.tools.pr_height + args.tools.drupal_toolbar_height ) + 'px';
             }  
         });
     }

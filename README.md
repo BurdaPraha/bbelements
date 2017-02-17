@@ -15,17 +15,20 @@ Example:
 ```
 createBranding({
     type: 'anicka',
-    creative_first: 'Tesco_GHS_-_Xmass-11-12_16-branding.jpg',
-    creative_second: 'xy.jpg',
-    creative_megaboard: {
-        file: 'Iris_970x120_chip/index.html'
-    },
-    background_color: '#fff',
-    branding_width: 1900,
-    branding_height: 1200,
-    megaboard_height: 70,
-    page_width: 980,
-    element_class: 'branding_wrapper'
+    creative: {
+        first: {
+            file: 'Tesco_GHS_-_Xmass-11-12_16-branding.jpg'
+        },
+        second: {
+            file: 'xy.jpg'
+        },
+        megaboard: {
+            file: 'Iris_970x120_chip/index.html'
+            width: 123,
+            height: 456
+        },
+        background_color: '#fff',
+    }
 });
 
 // here please paste generated lib.min.js content!
