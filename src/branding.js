@@ -13,6 +13,28 @@ createBranding({
     }
 });
 
+
+/**
+ * Merge deep objects
+ * Credit: http://stackoverflow.com/a/20591261/3783469
+ * @param target
+ * @returns {*}
+ */
+function extend (target) {
+    for(var i=1; i<arguments.length; ++i) {
+        var from = arguments[i];
+        if(typeof from !== 'object') continue;
+        for(var j in from) {
+            if(from.hasOwnProperty(j)) {
+                target[j] = typeof from[j]==='object'
+                    ? extend({}, target[j], from[j])
+                    : from[j];
+            }
+        }
+    }
+    return target;
+}
+
 /**
  * Create css factory, todo: Object.keys(cssObject).reduce(fn, default)
  * @param cssObject
@@ -48,7 +70,7 @@ function generateCSS(cssObject)
  */
 function createBranding(myOptions)
 {
-    const defaultOptions = [{
+    const defaultOptions = {
         type: '',
         creative: {
             first: {
@@ -79,14 +101,10 @@ function createBranding(myOptions)
         tpl_shared: true,
         css: '',
         html: ''
-    }];
-    
-    // merge options - todo: bug!!
-    //var args = Object.assign(myOptions, defaultOptions);
+    };
 
-    const args = Object.assign({}, defaultOptions, myOptions);
-
-    console.log(args);
+    // merge objects
+    var args = extend({}, defaultOptions, myOptions);
     
     // vyska odsazeni webu
     args.creative.megaboard.height += args.tools.pr_height;
@@ -283,7 +301,7 @@ function createBranding(myOptions)
                             + "<a class='branding__bb6' href='%%__REDIRECT%%' target='_blank'></a>"
                         + "</div>"
                         + "<div class='branding__bb7 branding__right'>"
-                        + "<div style='branding__bb8'></div>"
+                        + "<div class='branding__bb8'></div>"
                             + "<a class='branding__bb9 branding__right' href='%%__REDIRECT%%' target='_blank'></a>"
                         + "</div>"
                     + "</div>"
