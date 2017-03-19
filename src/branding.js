@@ -1,16 +1,20 @@
+/**
+ * Example use !!!
+ */
 createBranding({
-    type: 'anicka',
+    type: 'maruska',
     creative: {
         first: {
-            file: 'branding1700x200.jpg'
+            file: 'Branding_1700x1200.jpg'
         },
         megaboard: {
-            file: '765517/index.html',
-            width: 700,
+            file: '',
+            width: 970,
             height: 120
         },
         background_color: '#fff'
-    }
+    },
+    pixel_adform: 'http://track.adform.net/adfserve/?bn=16395320;1x1inv=1;srctype=3;ord=[timestamp]'
 });
 
 
@@ -92,10 +96,12 @@ function createBranding(myOptions)
             background_options: ''
         },
         tools: {
+            height: 1200,
             pr_word: 'Promotion',
             pr_height: 15,
             drupal_toolbar_height: 80
         },
+        pixel_adform: '',
         page_width: 980, // @todo: think about dynamic looking
         element_class: 'branding_wrapper',
         tpl_shared: true,
@@ -132,7 +138,7 @@ function createBranding(myOptions)
         case 'amalka':
         
             // check if valid
-            if('' == args.creative.megaboard.file || args.creative.megaboard.file.indexOf('.html') !== -1){return alert('Please fill in creative.megaboard item file')};
+            if('' == args.creative.megaboard.file || args.creative.megaboard.file.indexOf('.html') !== -1){return alert('Please fill in creative.megaboard item file')}
             
             args.css+= '' +
                 '.branding__megaboard iframe {margin:0px; border:0px}';
@@ -218,7 +224,7 @@ function createBranding(myOptions)
             element[0].style.background = (args.creative.background_color ? args.creative.background_color : '') + ' url("%%URL%%'+ args.creative.first.file +'") ' + args.creative.background_options;
             
             var cssObject = {
-                'branding': {
+                branding: {
                     width:      args.page_width + 'px',
                     height:     + args.creative.megaboard.height + 'px',
                     position:   'relative',
@@ -245,7 +251,7 @@ function createBranding(myOptions)
                 },
                 branding__bb4: {
                     width:      bb_WidthR + 'px',
-                    height:     args.branding_height + 'px',
+                    height:     args.tools.height + 'px',
                     position:   'absolute',
                     top:        0,
                     left:       '-' + bb_WidthR + 'px'
@@ -260,14 +266,14 @@ function createBranding(myOptions)
                 },
                 branding__bb6: {
                     width:      bb_WidthR + 'px',
-                    height:     args.branding_height + 'px',
+                    height:     args.tools.height + 'px',
                     position:   'fixed',
                     float:      'left',
                     outline:    'none'
                 },
                 branding__bb7: {
                     width:      bb_tempWidth +'px',
-                    height:     args.branding_height + 'px',
+                    height:     args.tools.height + 'px',
                     position:   'absolute',
                     top:        0,
                     left:       args.page_width + 'px'
@@ -282,7 +288,7 @@ function createBranding(myOptions)
                 },
                 branding__bb9: {
                     width:      bb_tempWidth + 'px',
-                    height:     args.branding_height + 'px',
+                    height:     args.tools.height + 'px',
                     position:   'fixed',
                     float:      'left',
                     outline:    'none'
@@ -309,6 +315,13 @@ function createBranding(myOptions)
 
             // print it!
             document.write('<!-- start BurdaDigital BB --><style>'+css+'</style>'+html+'<!-- end BurdaDigital BB -->');
+
+            // tracking
+            if(args.pixel_adform)
+            {
+                var _pixadf = new Image (1,1);
+                _pixadf.src = args.pixel_adform;
+            }
         }
 
         // onresize actions
