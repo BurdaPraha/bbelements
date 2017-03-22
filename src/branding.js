@@ -5,16 +5,15 @@ createBranding({
     type: 'maruska',
     creative: {
         first: {
-            file: 'Branding_1700x1200.jpg'
+            file: 'Pandora_Spring-Marianne-Branding_.jpg'
         },
         megaboard: {
             file: '',
-            width: 970,
-            height: 120
+            height: 165
         },
         background_color: '#fff'
     },
-    pixel_adform: 'http://track.adform.net/adfserve/?bn=16395320;1x1inv=1;srctype=3;ord=[timestamp]'
+    pixel: 'http://gdecz.hit.gemius.pl/_[TIMESTAMP]/redot.gif?id=1vObGes8yDiRLD8fOaf3ltTa3wi1KaMZ9MUD9r328Gv.q7/fastid=hhyvsrheeqohtafvqysmwumulfnn/stparam=ulfoelptoo'
 });
 
 
@@ -89,7 +88,7 @@ function createBranding(myOptions)
             },
             megaboard: {
                 file: '',
-                width: 970,
+                width: 980,
                 height: 120
             },
             background_color: '#fff',
@@ -101,7 +100,7 @@ function createBranding(myOptions)
             pr_height: 15,
             drupal_toolbar_height: 80
         },
-        pixel_adform: '',
+        pixel: '',
         page_width: 980, // @todo: think about dynamic looking
         element_class: 'branding_wrapper',
         tpl_shared: true,
@@ -113,7 +112,7 @@ function createBranding(myOptions)
     var args = extend({}, defaultOptions, myOptions);
     
     // vyska odsazeni webu
-    args.creative.megaboard.height += args.tools.pr_height;
+    //args.creative.megaboard.height += args.tools.pr_height;
     
     // allowed with superpowers
     switch(args.type)
@@ -125,7 +124,7 @@ function createBranding(myOptions)
         
         // fixed bg
         case 'maruska':
-            args.creative.background_options = 'no-repeat fixed center ' + args.tools.pr_height + 'px'; 
+            args.creative.background_options = 'no-repeat center ' + args.tools.pr_height + 'px'; //fixed
         break;
             
         // auto replicated
@@ -205,6 +204,8 @@ function createBranding(myOptions)
         // element fallback
         element = document.getElementsByTagName("body");
     }
+
+    console.log(element);
     
     if(element.length)
     {
@@ -224,6 +225,9 @@ function createBranding(myOptions)
             element[0].style.background = (args.creative.background_color ? args.creative.background_color : '') + ' url("%%URL%%'+ args.creative.first.file +'") ' + args.creative.background_options;
             
             var cssObject = {
+                promotion__megaboard: {
+                    display:    'none'
+                },
                 branding: {
                     width:      args.page_width + 'px',
                     height:     + args.creative.megaboard.height + 'px',
@@ -235,7 +239,7 @@ function createBranding(myOptions)
                     height:     '12px',
                     background: '#fff',
                     position:   'absolute',
-                    top:        '-61px',
+                    top:        0, // '-61px'
                     padding:    '3px 0 0',
                     color:      '#666',
                     fontSize:   '10px',
@@ -245,7 +249,7 @@ function createBranding(myOptions)
                 branding__bb3: {
                     width:      args.page_width + 'px',
                     height:     args.creative.megaboard.height + 'px',
-                    position:   'fixed',
+                    //position:   'fixed',
                     float:      'left',
                     outline:    'none'
                 },
@@ -261,35 +265,31 @@ function createBranding(myOptions)
                     height:     '12px',
                     background: '#fff',
                     position:   'absolute',
-                    top:        '-61px',
+                    top:        0, // '-61px'
                     padding:    '3px 0 0;'
                 },
                 branding__bb6: {
                     width:      bb_WidthR + 'px',
                     height:     args.tools.height + 'px',
-                    position:   'fixed',
+                    //position:   'fixed',
                     float:      'left',
                     outline:    'none'
                 },
                 branding__bb7: {
-                    width:      bb_tempWidth +'px',
+                    //width:      bb_tempWidth +'px',
+                    width:      '360px',
                     height:     args.tools.height + 'px',
                     position:   'absolute',
                     top:        0,
-                    left:       args.page_width + 'px'
+                    //left:       args.page_width + 'px'
+                    right:      '-360px',
                 },
                 branding__bb8: {
-                    width:      '100%',
-                    height:     '12px',
-                    background: '#fff',
-                    position:   'absolute',
-                    top:        '-61px',
-                    padding:    '3px 0 0'
                 },
                 branding__bb9: {
                     width:      bb_tempWidth + 'px',
                     height:     args.tools.height + 'px',
-                    position:   'fixed',
+                    //position:   'fixed',
                     float:      'left',
                     outline:    'none'
                 }
@@ -300,14 +300,15 @@ function createBranding(myOptions)
 
             var html = ""
                 + "<div class='branding branding__" + args.type + "'>"
-                    + "<div class='branding__promotion'>"+args.tools.pr_word+"</div>"/* + args.html + */
+                    + "<div class='promotion__badge'><span>" + args.tools.pr_word + "</span></div>"/* + args.html + */
                     + "<a class='branding__bb3' href='%%__REDIRECT%%' target='_blank'></a>"
                     + "<div class='branding__bb4'>"
                         + "<div class='branding__bb5'>"
                             + "<a class='branding__bb6' href='%%__REDIRECT%%' target='_blank'></a>"
                         + "</div>"
-                        + "<div class='branding__bb7 branding__right'>"
-                        + "<div class='branding__bb8'></div>"
+                    + "</div>"
+                    + "<div class='branding__bb7 branding__right'>"
+                        + "<div class='branding__bb8'>"
                             + "<a class='branding__bb9 branding__right' href='%%__REDIRECT%%' target='_blank'></a>"
                         + "</div>"
                     + "</div>"
@@ -317,10 +318,10 @@ function createBranding(myOptions)
             document.write('<!-- start BurdaDigital BB --><style>'+css+'</style>'+html+'<!-- end BurdaDigital BB -->');
 
             // tracking
-            if(args.pixel_adform)
+            if(args.pixel)
             {
                 var _pixadf = new Image (1,1);
-                _pixadf.src = args.pixel_adform;
+                _pixadf.src = args.pixel;
             }
         }
 
