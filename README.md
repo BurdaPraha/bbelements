@@ -13,22 +13,29 @@ script for showing branding
 
 Example:
 ```
-createBranding({
-    type: 'anicka',
+BD_CreateBranding({
+    type: 'maruska',
     creative: {
         first: {
-            file: 'Tesco_GHS_-_Xmass-11-12_16-branding.jpg'
-        },
-        second: {
-            file: 'xy.jpg'
+            file: 'Marianne_Branding_1700x1200.jpg'
         },
         megaboard: {
-            file: 'Iris_970x120_chip/index.html'
-            width: 123,
-            height: 456
+            file: '',
+            height: 150
         },
-        background_color: '#fff',
-    }
+        background_color: '#fff'
+    },
+    tools: {
+        pr_height: 0
+    },
+    pixel: 'https://track.adform.net/adfserve/?bn=16817086;1x1inv=1;srctype=3;ord=[timestamp]',
+    ad_server: {
+        url: '%%__URL%%',
+        click_url: '%%__REDIRECT%%',
+        click_url_encoded: '%%__REDIRECT_ENCODED%%',
+        cd_ad_domain: '%%__CDN_AD_DOMAIN%%'
+    },
+    dev: true
 });
 
 // here please paste generated lib.min.js content!
