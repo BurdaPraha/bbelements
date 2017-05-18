@@ -407,11 +407,6 @@ function BD_CreateBranding(myOptions)
             // fix cursor
             document.body.style.cursor = 'inherit';
 
-            document.body.onload = function()
-            {
-                document.body.removeAttribute('style');
-            };
-
             break;
 
         default:
@@ -586,7 +581,7 @@ function BD_CreateBranding(myOptions)
         document.addEventListener("DOMContentLoaded", function(e)
         {
             // if branding have bigger height than body
-            if(body.height < args.tools.height)
+            if(body.offsetHeight < args.tools.height)
             {
                 body.style.height = (args.tools.height + 50) + 'px';
             }
@@ -595,6 +590,12 @@ function BD_CreateBranding(myOptions)
             if(body.classList.contains(args.tools.class_toolbar))
             {
                 body.style.backgroundPosition = 'center ' + ( args.tools.pr_height + args.tools.drupal_toolbar_height ) + 'px';
+            }
+
+            // make element same height as body
+            if(element.offsetHeight < body.offsetHeight)
+            {
+                element.style.height = body.offsetHeight + 'px';
             }
         });
     }
