@@ -1,8 +1,8 @@
 {
   "name": "burdapraha/bbelements",
   "type": "drupal-module",
-  "description": "Wrapper for ibillboard.com Ad Server async scripts implementation with own branding solution",
-  "keywords": ["log", "logging"],
+  "description": "Wrapper for ibillboard / bbelements Ad Server async scripts implementation with own branding solution",
+  "keywords": ["ads", "drupal", "drupal-8", "ibillboard", "bbelements", "branding", "czech-republic"],
   "homepage": "https://github.com/BurdaPraha",
   "license": "MIT",
   "authors": [
