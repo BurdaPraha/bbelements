@@ -1,0 +1,15 @@
+{
+  "name": "burdapraha/bbelements",
+  "type": "drupal-module",
+  "description": "Wrapper for ibillboard.com Ad Server async scripts implementation with own branding solution",
+  "keywords": ["log", "logging"],
+  "homepage": "https://github.com/BurdaPraha",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Michal Landsman",
+      "email": "landsman@studioart.cz"
+    }
+  ],
+  "minimum-stability": "dev"
+}

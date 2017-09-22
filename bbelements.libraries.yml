@@ -1,0 +1,9 @@
+external:
+  header: true
+  js:
+    //bbcdn-static.bbelements.com/scripts/ibb-async/stable/tag.js: { type: external, minified: true, preprocess: false }
+
+own:
+  js:
+    js/branding.js: { }
+    js/wrapper.js: { }

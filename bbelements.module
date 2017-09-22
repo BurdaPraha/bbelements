@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @param array $attachments
+ */
+function bbelements_page_attachments(array &$attachments)
+{
+    $attachments['#attached']['library'][] = 'bbelements/external';
+    $attachments['#attached']['library'][] = 'bbelements/own';
+}

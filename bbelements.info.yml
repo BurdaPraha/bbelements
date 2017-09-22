@@ -1,0 +1,7 @@
+type: module
+name: bbelements
+description: 'Wrapper for ibillboard.com Ad Server async scripts implementation with own branding solution'
+package: Theming
+core: 8.x
+tags:
+ - ads
