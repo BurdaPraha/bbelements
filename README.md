@@ -20,3 +20,18 @@ Read article about it here: [Using of Asynchronous codes](http://help.billboard.
     
 2. javascript will inspect DOM of page and find all positions with these ids and will make request to adserver. Ads will be printed from system. 
 
+
+## Google Tag Manager settings
+
+Import [this container JSON file](./docs/GTM.json) to your GTM account, [see more here](https://www.lunametrics.com/blog/2015/08/26/import-container-google-tag-manager/).
+
+Steps:
+
+1. [Download JSON](./docs/GTM.json)
+2. Rename `UA-XXXXXX-YY` to your GA code in this file
+3. Admin => Import Container
+4. Choose container file (what you download from here)
+5. Choose workspace: Existing => (your workspace, probably Default)
+6. Choose an import options: Merge => Rename conflicting tags, triggers and variables
+7. View Detailed Changes
+8. Confirm
