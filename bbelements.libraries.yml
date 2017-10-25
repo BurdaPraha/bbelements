@@ -4,6 +4,8 @@ external:
     //bbcdn-static.bbelements.com/scripts/ibb-async/stable/tag.js: { type: external, minified: true, preprocess: false }
 
 own:
+  header: true
   js:
-    js/branding.js: { }
-    js/wrapper.js: { }
+    js/branding.js: { minified: false, preprocess: false }
+    js/ads.js: { minified: false, preprocess: false }
+    js/wrapper.js: { minified: false, preprocess: false }
