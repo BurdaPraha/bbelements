@@ -7,7 +7,11 @@ Read article about it here: [Using of Asynchronous codes](http://help.billboard.
 
 ## How it works?
 
-1. You just need create blocks with markdown like this:
+1. download module via composer (or via [npm / yarn](#how-can-i-use-it-without-drupal)):
+
+    `composer require burdapraha/bbelements dev-master`
+
+2. You just need create blocks with markdown like this:
 
 
     ```
@@ -18,7 +22,7 @@ Read article about it here: [Using of Asynchronous codes](http://help.billboard.
     ```
 
     
-2. javascript will inspect DOM of page and find all positions with these ids and will make request to adserver. Ads will be printed from system. 
+3. javascript will inspect DOM of page and find all positions with these ids and will make request to adserver. Ads will be printed from system. 
 
 
 ## Google Tag Manager settings
