@@ -4,7 +4,7 @@
 document.addEventListener("DOMContentLoaded", function(e)
 {
     window.BurdaAdsLayer = new BurdaAds();
-    window.BurdaAdsLayer.setDev(true);
+    window.BurdaAdsLayer.setDev(false);
     window.BurdaAdsLayer.create();
 
 });

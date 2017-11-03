@@ -1,4 +1,4 @@
-# iBillBoard Ad server Drupal 8 module
+# iBillBoard Ads loading library
 
 Drupal 8 module for [bbelements](http://eu.bbelements.com/login.bb?url=%2Fenter%2F) ads printing with own branding solution.
 Read article about it here: [Using of Asynchronous codes](http://help.billboard.cz/xwiki/bin/view/AdServer+v2/UsageAsynCodes?language=en).
@@ -35,3 +35,38 @@ Steps:
 6. Choose an import options: Merge => Rename conflicting tags, triggers and variables
 7. View Detailed Changes
 8. Confirm
+
+## How can I use it without Drupal?
+
+Sure! Easily.. 
+
+`yarn install @burdapraha/bbelements` or `npm install @burdapraha/bbelements`
+
+*Implementation:*
+
+```
+<head>
+...
+<script src="//bbcdn-static.bbelements.com/scripts/ibb-async/stable/tag.js"></script>
+...
+</head>
+<body>
+
+    ...
+
+    <!-- this is example positions somewhere in page -->
+    <div id="ab" data-bbelements-id="248828.1.2.7"></div>
+    <div id="xy" data-bbelements-id="248828.1.2.8"></div>
+    <div id="zy" data-bbelements-id="248828.1.2.9"></div>
+
+    ...
+
+    <!-- if you don't using branding, skip this lib -->
+    <script src="{{ your_assets_path }}/js/branding.js"></script>
+    
+    <!-- core ads libs ->
+    <script src="{{ your_assets_path }}/js/ads.js"></script>
+    <script src="{{ your_assets_path }}/js/wrapper.js"></script>
+
+</body>
+```
