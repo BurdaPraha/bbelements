@@ -32,9 +32,10 @@ window.BD_Branding.prototype = {
     create: function (myOptions)
     {
         // init defaults
-        this.is_front_page   = false;
         this.is_gallery      = false;
         this.pseudo_sides    = true;
+        this.element         = null;
+        this.scroll          = {last_know_position: 0, direction: '?'};
         this.dev             = false;
         this.args            = {};
         this.html            = '';
@@ -46,18 +47,18 @@ window.BD_Branding.prototype = {
         // is it gallery page or ... ?
         this.checkPageType();
 
-        // branding types init
-        this.setupTypes();
-
         // get main wrapper
         this.getWrapper();
+
+        // branding types init
+        this.setupTypes();
 
         if(typeof(this.element) != 'undefined' && this.element != null)
         {
             // marketing tracking pixel
             this.createTrackingPixel();
 
-            this.css = this.generateCSS(this.cssDefault(), true);
+            this.css = this.generateCSS(this.cssDefault(), true, this.getArgs());
 
             // create layout
             this.tplLayout();
@@ -76,19 +77,17 @@ window.BD_Branding.prototype = {
 
     tplLayout: function()
     {
-        this.html = "<div class='promotion__branding branding__" + this.args.type + "'>";
+        var t = this;
 
-        if('' !== this.args.tools.pr_word){
-            this.html+="<div class='promotion__badge'><span>" + this.args.tools.pr_word + "</span></div>";
+        this.html = "<div class='" + t.args.cssPrefixBEM + "'>";
+
+        if('' !== t.args.tools.pr_word){
+            t.html+="<div class='" + t.composeBEM('badge') + "'><span>" + t.args.tools.pr_word + "</span></div>";
         }
 
-        this.html+=this.tplMegaBoard();
+        t.html+=t.tplMegaBoard() + t.tplPseudoSides();
 
-        if(this.args.pseudo_sides) {
-            this.html+=this.tplPseudoSides();
-        }
-
-        this.html+="</div>";
+        t.html+="</div>";
     },
 
 
@@ -116,7 +115,7 @@ window.BD_Branding.prototype = {
                     file_mobile:        '',
                     width:              1000,
                     height:             120,
-                    his_class:          'promotion__megaboard',
+                    his_class:          'megaboard',
                     html:               '',
                     html_mobile:        ''
                 },
@@ -128,6 +127,7 @@ window.BD_Branding.prototype = {
                 pr_word:                'Promotion',
                 pr_height:              15,
                 drupal_toolbar_height:  80,
+                fixed_elements_before:  ['[data-branding-fixed]'],
                 element_id:             'page',
                 class_front_page:       'front-page',
                 class_gallery:          'gallery',
@@ -150,12 +150,13 @@ window.BD_Branding.prototype = {
                 viewable_track_url:     ''
 
             },
-            page_width:                 980, // @todo: think about dynamic looking
+            page_width:                 1000, // @todo: think about dynamic looking
             page_responsive_from:       980,
             element_class:              'branding_wrapper',
             tpl_shared:                 true,
             dev:                        false,
             css:                        '',
+            cssPrefixBEM:               'branding', // note: must be declared in defaultCSS !
             html:                       ''
         };
 
@@ -174,7 +175,7 @@ window.BD_Branding.prototype = {
     setupTypes: function(args)
     {
         var t = this;
-        
+
         // allowed with superpowers
         switch(t.args.type)
         {
@@ -185,7 +186,8 @@ window.BD_Branding.prototype = {
 
             // fixed bg
             case 'maruska':
-                t.args.creative.background_options = 'no-repeat center ' + t.args.tools.pr_height + 'px'; //fixed
+                t.scrollFixer();
+                t.args.creative.background_options = 'no-repeat top center'; //fixed ' + t.args.tools.pr_height + 'px'
                 break;
 
             // auto replicated
@@ -225,6 +227,90 @@ window.BD_Branding.prototype = {
 
 
     /**
+     * We calculate document and window height on each scroll event to account for dynamic DOM changes.
+     */
+    scrollFixer: function()
+    {
+        var t           = this;
+        var offset    = t.element.offsetTop;
+
+        (function()
+        {
+            var supportOffset   = window.pageYOffset !== undefined;
+            var ticking         = false;
+
+            window.addEventListener('wheel', function(e)
+            {
+                var currYPos                = supportOffset ? window.pageYOffset : document.body.scrollTop;
+                t.scroll.last_know_position = currYPos;
+                t.scroll.direction          = t.scroll.last_know_position > currYPos ? 'up' : 'down';
+                var before                  = t.heightOfFixedElements();
+
+                if (!ticking)
+                {
+                    window.requestAnimationFrame(function() // todo: check cross-browser support
+                    {
+                        ticking = false;
+
+                        if(t.scroll.last_know_position >= offset - before)
+                        {
+                            // make it floating now!
+                            t.element.style.position    = 'fixed';
+                            t.element.style.top         = before + 'px';
+
+
+                        }
+                        else
+                        {
+                            // reset
+                            t.element.style.position    = 'absolute';
+                            t.element.style.top         = 'inherit';
+                        }
+
+                    });
+                }
+
+                ticking = true;
+
+            });
+
+        })();
+    },
+
+
+    /**
+     * get height of fixed elements before branding - like floating header / menu etc and calculate theirs height
+     * @returns {number}
+     */
+    heightOfFixedElements: function()
+    {
+        var el      = this.args.tools.fixed_elements_before;
+        var height  = 0;
+
+        if(typeof el == 'object' && null !== el)
+        {
+            var count = Object.keys(el).length;
+            for(var i = 0; i < count; ++i)
+            {
+                var search  = document.querySelectorAll(el[i]);
+                for(var result = 0; result > search; ++result)
+                {
+                    var each    = search[result];
+                    var eHeight = each.offsetHeight;
+
+                    if(eHeight > 0){
+                        height = height + eHeight;
+                    }
+                }
+            }
+        }
+
+
+        return height;
+    },
+
+
+    /**
      * Possible in future useful for some difference between page types
      */
     checkPageType: function()
@@ -236,17 +322,13 @@ window.BD_Branding.prototype = {
         }
         else
         {
-            this.is_front_page = page.classList.contains(this.args.tools.class_front_page);
-            this.is_gallery    = page.classList.contains(this.args.tools.class_gallery);
+            this.is_gallery = page.classList.contains(this.args.tools.class_gallery);
         }
 
-        // zero padding
+        // zero padding - todo: check this
         if(this.is_gallery){
             this.args.tools.pr_height = 0;
         }
-
-        // vyska odsazeni webu
-        //args.creative.megaboard.height += args.tools.pr_height;
     },
 
 
@@ -273,9 +355,14 @@ window.BD_Branding.prototype = {
             console.info('our main element:', this.element);
         }
 
+        // add classes for <body>
+        var bcl = document.body.classList;
+
+        bcl.add(this.composeBEM(this.args.tools.class_active));
+        bcl.add(this.composeBEM('branding-type--' + this.args.type));
+
         // apply background
         this.elementAddBg(this.element, this.args.creative.background_color, this.args.creative.first.file, this.args.creative.background_options);
-        this.element.classList.add(this.args.tools.class_active);
     },
 
 
@@ -289,8 +376,8 @@ window.BD_Branding.prototype = {
     elementAddBg: function (el, color, url, options)
     {
         el.style.background = (color ? color : '')
-        + ' url("'+ this.args.ad_server.url + url +'") '
-        + (options ? options : '');
+            + ' url("'+ this.args.ad_server.url + url +'") no-repeat top center';
+        //+ (options ? options : '');
     },
 
 
@@ -326,44 +413,78 @@ window.BD_Branding.prototype = {
      */
     incs: function (key, value)
     {
-        var i = ['height', 'width', 'left', 'right', 'top', 'bottom'].indexOf(key);
-        var a = ['auto!important', 'auto', 'important'].indexOf(value);
+        var resume_key      = null;
+        var resume_val      = null;
+        var def_property    = ['height', 'width', 'left', 'right', 'top', 'bottom'];
+        var def_value       = ['auto', '!important', '%', 'rem', 'em', 'inherit', 'initial', 'unset'];
+
+        for(var i1 = 0; i1 < def_property.length; ++i1)
+        {
+            resume_key = key.search(def_property[i1]);
+            if(resume_key >= 0){
+                break;
+            }
+        }
+
+        for(var i2 = 0; i2 < def_value.length; ++i2)
+        {
+            resume_val = value.toString().search(def_value[i2]);
+            if(resume_val >= 0){
+                break;
+            }
+        }
 
 
-        return i >= 0 && a < 0 ? 'px' : '';
+        return resume_key >= 0 && resume_val < 0 ? 'px' : '';
     },
 
 
     /**
      * Factory for create CSS from object, todo: Object.keys(cssObject).reduce(fn, default), todo: media query, todo: think about storing to local storage, caching with some checksum
      * @param cssObject
+     * @param close
+     * @param variables
      * @returns {string}
      */
-    generateCSS: function (cssObject, close)
+    generateCSS: function (cssObject, close, variables)
     {
-        /**
-         *
-         * @param i
-         * @returns {*}
-         */
-        var start = function(i)
-        {
-            // nothing before these
-            if (i.indexOf('@') >= 0 || i.indexOf('<') >= 0 || 'iframe' === i){
-                return '';
-            }
-
-            if (i.indexOf('#') >= 0){
-                return '#';
-            }
-
-            // class by default
-            return '.';
-        };
-
+        var t = this;
 
         var isMediaQuery = function(i){
             return i.indexOf('@') >= 0;
+        };
+
+        var isVariable = function(i){
+            return i.indexOf('$') >= 0;
+        };
+
+        var isChained = function(i){
+            return i.indexOf('>') >= 0;
+        };
+
+        var isId = function(i){
+            return i.indexOf('#') >= 0;
+        };
+
+        var start = function(i)
+        {
+            var p = '.'; // by default is all class
+
+            if (isMediaQuery(i) || isChained(i) || isVariable(i) || 'iframe' === i){
+                p = '';
+            }
+
+            if (isId(i)){
+                p = '#';
+            }
+
+            if(isVariable(i)) {
+                i = i.replace('$', '');
+                i = variables[i];
+            }
+
+
+            return p + i;
         };
 
         var css = '';
@@ -371,39 +492,43 @@ window.BD_Branding.prototype = {
         {
             // create new class or media query
             var c = 0;
-
             for(var cProperty in cssObject[cName])
             {
+                // this is empty object :(
+                if(0 == Object.keys(cssObject[cName]).length){
+                    continue;
+                }
+
                 // class properties or nested media query
                 if("0" == cProperty)
                 {
                     var _close = true;
 
                     // open it only for first time
-                    if(true == isMediaQuery && c == 0){
-                        css += start(cName) + cName + '{';
+                    if(true == isMediaQuery(cName) && 0 == c){
+                        css += start(cName) + '{';
                     }
                     else
                     {
                         // nested CSS like: .someclass .nextclass {}
-                        css += start(cName) + cName + ' ';
+                        css += start(cName) + ' ';
                         _close = false;
                     }
 
                     // elements
-                    css += this.generateCSS(cssObject[cName][cProperty], _close);
+                    css += t.generateCSS(cssObject[cName][cProperty], _close, variables);
                 }
                 else
                 {
                     if(c == 0){
-                        css += start(cName) + cName + '{';
+                        css += start(cName) + '{';
                     }
 
                     // for classes like: 'font-size' we must using 'font_size' in object and replacing it here
                     var property = cProperty.replace('_', '-');
 
                     // create option row
-                    css += property + ':' + cssObject[cName][cProperty] + this.incs(property, cssObject[cName][cProperty]) + ';';
+                    css += property + ':' + cssObject[cName][cProperty] + t.incs(property, cssObject[cName][cProperty]) + ';';
                 }
 
                 c++;
@@ -415,7 +540,7 @@ window.BD_Branding.prototype = {
             }
         }
 
-        if(this.isDev){
+        if(t.isDev){
             console.info('all styles:', css);
         }
 
@@ -426,34 +551,22 @@ window.BD_Branding.prototype = {
 
     listeners: function()
     {
-        window.addEventListener('resize', function()
-        {
-            if(this.isDev){
-                console.info('window has been resized');
-            }
+        /** we are already in DOM ready... */
 
-            if(this.element.offsetHeight < document.body.offsetHeight){
-                this.element.style.height = document.body.offsetHeight + 'px';
-            }
-        });
+        // if branding have bigger height than body
+        if(document.body.offsetHeight < this.args.tools.height){
+            document.body.style.height = (this.args.tools.height + 50) + 'px';
+        }
 
-        document.addEventListener("DOMContentLoaded", function(e)
-        {
-            // if branding have bigger height than body
-            if(document.body.offsetHeight < this.args.tools.height){
-                document.body.style.height = (this.args.tools.height + 50) + 'px';
-            }
+        // if is admin logged
+        if(document.body.classList.contains(this.args.tools.class_toolbar)){
+            document.body.style.backgroundPosition = 'center ' + ( this.args.tools.pr_height + this.args.tools.drupal_toolbar_height ) + 'px';
+        }
 
-            // if is admin logged
-            if(document.body.classList.contains(this.args.tools.class_toolbar)){
-                document.body.style.backgroundPosition = 'center ' + ( this.args.tools.pr_height + this.args.tools.drupal_toolbar_height ) + 'px';
-            }
-
-            // make element same height as body
-            if(this.element.offsetHeight < document.body.offsetHeight){
-                this.element.style.height = document.body.offsetHeight + 'px';
-            }
-        });
+        // make element same height as body
+        if(this.element.offsetHeight < document.body.offsetHeight){
+            this.element.style.height = document.body.offsetHeight + 'px';
+        }
     },
 
 
@@ -467,7 +580,7 @@ window.BD_Branding.prototype = {
 
         if('' !== t.args.creative.megaboard.file || '' !== t.args.creative.megaboard.file_mobile)
         {
-            var out="<div class='branding__megaboard'>";
+            var out="<div class='" + t.composeBEM('megaboard') + "'>";
 
             if('html' == t.ext(t.args.creative.megaboard.file))
             {
@@ -483,7 +596,7 @@ window.BD_Branding.prototype = {
 
             if('jpg' == t.ext(t.args.creative.megaboard.file) && '' !== t.args.creative.megaboard.file)
             {
-                out+="<a class='branding__bb3' href='" + t.args.ad_server.click_url + "' target='_blank'>";
+                out+="<a href='" + t.args.ad_server.click_url + "' target='_blank'>";
                 out+=""
                     + "<img"
                     + " class='megaboard__desktop'"
@@ -498,7 +611,7 @@ window.BD_Branding.prototype = {
             if('jpg' == t.ext(t.args.creative.megaboard.file_mobile) && '' !== t.args.creative.megaboard.file_mobile)
             {
                 out+=""
-                    + "<a class='branding__bb3' href='" + t.args.ad_server.click_url + "' target='_blank'>"
+                    + "<a href='" + t.args.ad_server.click_url + "' target='_blank'>"
                     + "<img"
                     + " class='megaboard__mobile'"
                     + " src='" + t.args.ad_server.url + t.args.creative.megaboard.file_mobile + "?redir=" + t.args.ad_server.click_url_encoded + "&bbtarget=_blank'"
@@ -512,7 +625,7 @@ window.BD_Branding.prototype = {
         else
         {
             if(t.isDev){console.warn("There isn't any megaboard creative file");}
-            return "<a class='branding__bb3' href='" + t.args.ad_server.click_url + "' target='_blank'></a>";
+            return "<a href='" + t.args.ad_server.click_url + "' target='_blank'></a>";
         }
 
 
@@ -526,17 +639,10 @@ window.BD_Branding.prototype = {
      */
     tplPseudoSides: function()
     {
-        return ""
-            + "<div class='branding__bb4'>"
-            + "<div class='branding__bb5'>"
-            + "<a class='branding__bb6' href='" + this.args.ad_server.click_url + "' target='_blank'></a>"
-            + "</div>"
-            + "</div>"
-            + "<div class='branding__bb7 branding__right'>"
-            + "<div class='branding__bb8'>"
-            + "<a class='branding__bb9 branding__right' href='" + this.args.ad_server.click_url + "' target='_blank'></a>"
-            + "</div>"
-            + "</div>";
+        return "" +
+            "<div class='" + this.composeBEM('pseudosides') + "'>" +
+            "<a class='" + this.composeBEM('pseudosides-a') + "' href='" + this.args.ad_server.click_url + "' target='_blank'></a>" +
+            "</div>";
     },
 
 
@@ -554,16 +660,55 @@ window.BD_Branding.prototype = {
 
         // default styles
         var style = {
-            promotion__megaboard: {
-                display:    'none'
-            },
-            promotion__branding: {
+            'branding': {   // todo: think how inject $cssPrefixBEM as variable
                 width:      this.args.page_width,
-                height:     + this.args.creative.megaboard.height,
+                height:     this.args.creative.megaboard.height,
                 position:   'relative',
+                'z-index':  0,
                 margin:     '0 auto'
             },
-            branding__bb3: {
+            branding__pseudosides: {
+                width:      '100%'
+            },
+            'branding__pseudosides-a': {
+                width:      '100%',
+                height:     this.args.tools.height,
+                position:   'fixed',
+                top:        0,
+                left:       0,
+                outline:    'none'
+            },
+            megaboard__mobile: {
+                display:    'none'
+            },
+            branding__badge: {
+                width:          '100%',
+                height:         '17px',
+                position:       'absolute',
+                display:        'block',
+                padding:        0,
+                'margin-top':   0,
+                'text-align':   'right',
+                'background':   'transparent'
+            },
+            'branding__badge span': {
+                'padding':          '1px 10px',
+                'vertical-align':   'top',
+                'background':       '#fff',
+                'font-size':        '10px',
+                'text-transform':    'uppercase',
+                'color':             '#878787',
+                'font-family':       '"Arial",sans-serif'
+            },
+            branding__megaboard: [{
+
+                '> iframe': {
+                    margin:     0,
+                    border:     0
+                }
+
+            }],
+            'branding__megaboard a': {
                 width:      this.args.page_width,
                 height:     this.args.creative.megaboard.height,
                 display:    'block',
@@ -571,71 +716,21 @@ window.BD_Branding.prototype = {
                 //float:      'left',
                 outline:    'none'
             },
-            branding__bb4: {
-                width:      bb_WidthR,
-                height:     this.args.tools.height,
-                position:   'absolute',
-                top:        0,
-                left:       '-' + bb_WidthR
-            },
-            branding__bb5: {
-                width:      '100%',
-                height:     this.args.tools.height,
-                //background: '#fff',
-                position:   'absolute',
-                top:        0, // '-61px'
-                padding:    '3px 0 0;'
-            },
-            branding__bb6: {
-                width:      bb_WidthR,
-                height:     this.args.tools.height,
-                //position:   'fixed',
-                float:      'left',
-                outline:    'none'
-            },
-            branding__bb7: {
-                //width:      bb_tempWidth +'px',
-                width:      '360',
-                height:     this.args.tools.height,
-                position:   'absolute',
-                top:        0,
-                //left:       this.args.page_width
-                right:      '-360'
-            },
-            branding__bb8: {
-            },
-            branding__bb9: {
-                width:      bb_tempWidth,
-                height:     this.args.tools.height,
-                //position:   'fixed',
-                float:      'left',
-                outline:    'none'
-            },
-            megaboard__mobile: {
-                display:    'none'
-            },
-            branding__megaboard: [{
-
-                '< iframe': {
-                    margin:     0,
-                    border:     0
-                }
-
-            }],
             '@media(max-width: 990px)': [{
 
                 branding_wrapper: {
                     display:    'none'
                 },
+                branding: {
+                    height:     'auto'
+                },
                 megaboard__mobile: {
                     display:    'block',
                     height:     'auto!important'
                 },
-                promotion__branding: {
-                    height:     'auto'
-                },
-                branding__bb3: {
-                    height:     'auto'
+
+                branding__pseudosides: {
+                    display:    'none'
                 }
             }]
         };
@@ -657,11 +752,38 @@ window.BD_Branding.prototype = {
     {
         var t = this;
 
+        /**
+         * Custom pixel tracking - prepare dynamic URL, replacing [variables]
+         * @param src
+         * @returns {*}
+         */
+        var prepareVariables = function(src)
+        {
+            var vars = {
+                domain: window.location.hostname,
+                path: window.location.pathname + window.location.search,
+                campaign: (t.args.ad_server.campaign_name != 'undefined' ? t.args.ad_server.campaign_name : '')
+            };
+
+            for (var k in vars){
+                src = src.replace('[' + k + ']', vars[k]);
+            }
+
+
+            return src;
+        };
+
+
+        /**
+         * print <img> html element
+         * @param src
+         */
         var print = function(src){
             var p = new Image (1,1);
-            p.src = src;
+            p.src = prepareVariables(src);
             document.body.appendChild(p);
         };
+
 
         if(t.args.tpl_shared && t.args.pixel)
         {
@@ -708,7 +830,7 @@ window.BD_Branding.prototype = {
     printer: function(html)
     {
         var isIE = this.detectIE();
-        
+
         if(false == isIE || isIE >= 12)
         {
             document.currentScript.insertAdjacentHTML('beforebegin', html);
@@ -809,6 +931,18 @@ window.BD_Branding.prototype = {
 
 
     /********* GETTERS *********/
+
+
+    /**
+     * BEM helper for nice code
+     * @param name
+     * @param name
+     * @returns {*}
+     */
+    composeBEM: function(name)
+    {
+        return this.getArgs().cssPrefixBEM + '__' + name;
+    },
 
 
     /**
