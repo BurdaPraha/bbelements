@@ -1,0 +1,13 @@
+{
+  "name": "burdapraha/bbelements",
+  "description": "",
+  "type": "drupal-module",
+  "homepage": "",
+  "authors": [
+    {
+      "name": "Michal Landsman"
+    }
+  ],
+  "license": "MIT",
+  "minimum-stability": "dev"
+}

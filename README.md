@@ -2,14 +2,14 @@
 
 script for showing branding
 
-#3 Development
+# Development
 
 1. `npm install`
 2. do your job in scripts
 3. `gulp`
 4. use new generated script in ./dist/`lib.min.js` for bbelements
 
-#3 Using
+# Using
 
 Example:
 ```
@@ -42,9 +42,3 @@ BD_CreateBranding({
 ```
 
 You can override all object items what you can see in [branding.js](./src/branding.js#L3)
-
-## Todo:
-
-- merge script "background-double-layer-script.1.0.1.js" by bbelements support
-- solve loading via bower / npm - add tutorial here
-- test all types of branding to some stage hosting

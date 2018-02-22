@@ -1,0 +1,7 @@
+type: module
+name: bbelements
+description: 'wrapper for async javascripts'
+package: Theming
+core: 8.x
+tags:
+ - ads
