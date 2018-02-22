@@ -1,0 +1,21 @@
+uuid: f17a24fa-d8ac-40c4-81e8-14d9ea4e8f72
+langcode: cs
+status: true
+dependencies:
+  config:
+    - block_content.type.promotion
+    - field.storage.block_content.field_types
+  module:
+    - options
+id: block_content.promotion.field_types
+field_name: field_types
+entity_type: block_content
+bundle: promotion
+label: Type
+description: 'Typy banneru'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

@@ -1,0 +1,66 @@
+uuid: 92fcdcce-51b9-4fcd-9505-d06991346c79
+langcode: cs
+status: true
+dependencies:
+  module:
+    - block_content
+    - options
+id: block_content.field_types
+field_name: field_types
+entity_type: block_content
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: branding
+      label: branding
+    -
+      value: pseudo-branding-top
+      label: pseudo-branding-top
+    -
+      value: pseudo-branding-left
+      label: pseudo-branding-left
+    -
+      value: pseudo-branding-right
+      label: pseudo-branding-right
+    -
+      value: boardbanner
+      label: boardbanner
+    -
+      value: rectangle
+      label: rectangle
+    -
+      value: leaderboard
+      label: leaderboard
+    -
+      value: megaboard
+      label: megaboard
+    -
+      value: megaboard_pro-branding
+      label: megaboard_pro-branding
+    -
+      value: nestandard
+      label: nestandard
+    -
+      value: skyscraper_left
+      label: skyscraper_left
+    -
+      value: skyscraper_right
+      label: skyscraper_right
+    -
+      value: square
+      label: square
+    -
+      value: trackdelight
+      label: trackdelight
+    -
+      value: one2many
+      label: one2many
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

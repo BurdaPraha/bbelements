@@ -1,0 +1,108 @@
+uuid: c2e8b99b-5792-4c55-8219-7376acc71535
+langcode: cs
+status: true
+dependencies:
+  config:
+    - block_content.type.promotion
+    - field.field.block_content.promotion.body
+    - field.field.block_content.promotion.field_adserver_position_name
+    - field.field.block_content.promotion.field_adserver_position_status
+    - field.field.block_content.promotion.field_show_badge
+    - field.field.block_content.promotion.field_types
+  module:
+    - field_group
+    - text
+third_party_settings:
+  field_group:
+    group_adserver:
+      children:
+        - field_adserver_position_name
+        - field_adserver_position_status
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        label: 'Ad Server'
+        description: ''
+        required_fields: true
+        id: adserver
+        classes: ''
+      label: 'Ad Server'
+    group_design:
+      children:
+        - field_types
+        - field_show_badge
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        id: design
+        classes: ''
+        description: ''
+        required_fields: true
+      label: Design
+id: block_content.promotion.default
+targetEntityType: block_content
+bundle: promotion
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 3
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_adserver_position_name:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_adserver_position_status:
+    weight: 1
+    settings:
+      display_label: false
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_promotion_types:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  field_show_badge:
+    weight: 3
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_show_promotion_badge:
+    weight: 1
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_types:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  info:
+    type: string_textfield
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  langcode: true

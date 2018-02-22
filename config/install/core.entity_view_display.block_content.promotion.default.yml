@@ -1,0 +1,80 @@
+uuid: 9a816f75-74f3-4a05-8065-d5d7162b837d
+langcode: cs
+status: true
+dependencies:
+  config:
+    - block_content.type.promotion
+    - field.field.block_content.promotion.body
+    - field.field.block_content.promotion.field_adserver_position_name
+    - field.field.block_content.promotion.field_adserver_position_status
+    - field.field.block_content.promotion.field_show_badge
+    - field.field.block_content.promotion.field_types
+  module:
+    - options
+    - text
+id: block_content.promotion.default
+targetEntityType: block_content
+bundle: promotion
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_adserver_position_name:
+    weight: 5
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_adserver_position_status:
+    weight: 6
+    label: hidden
+    settings:
+      format: custom
+      format_custom_true: 'On'
+      format_custom_false: 'Off'
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_promotion_types:
+    weight: 1
+    label: visually_hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: list_key
+    region: content
+  field_show_badge:
+    type: boolean
+    weight: 0
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    region: content
+  field_show_promotion_badge:
+    weight: 2
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_types:
+    type: list_key
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  langcode: true

@@ -1,0 +1,11 @@
+uuid: 64a4d9fb-9eae-4ce7-9546-80feba2dfa95
+langcode: cs
+status: true
+dependencies:
+  config:
+    - block_content.type.promotion
+id: block_content.promotion
+target_entity_type_id: block_content
+target_bundle: promotion
+default_langcode: site_default
+language_alterable: false

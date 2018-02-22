@@ -1,0 +1,23 @@
+uuid: 1d7f9502-2133-43d3-ad50-fa4f74bdabf8
+langcode: cs
+status: true
+dependencies:
+  config:
+    - block_content.type.promotion
+    - field.storage.block_content.field_show_badge
+id: block_content.promotion.field_show_badge
+field_name: field_show_badge
+entity_type: block_content
+bundle: promotion
+label: 'Show promotion badge'
+description: 'Zobrazi oznaceni "Promotion" u banneru'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

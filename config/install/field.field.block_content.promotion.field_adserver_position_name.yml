@@ -1,0 +1,19 @@
+uuid: e303d0c6-3b40-4fc6-beda-884e62c5454f
+langcode: cs
+status: true
+dependencies:
+  config:
+    - block_content.type.promotion
+    - field.storage.block_content.field_adserver_position_name
+id: block_content.promotion.field_adserver_position_name
+field_name: field_adserver_position_name
+entity_type: block_content
+bundle: promotion
+label: 'Unikátní název pozice'
+description: 'v reklamním systému (napr. Square_11)'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

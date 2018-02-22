@@ -1,0 +1,8 @@
+uuid: 46871fb0-59e0-4e48-9a8b-271617fa27fc
+langcode: cs
+status: true
+dependencies: {  }
+id: promotion
+label: Promotion
+revision: 0
+description: 'Reklamní pozice'
