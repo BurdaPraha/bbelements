@@ -1,0 +1,19 @@
+{% set badge            = content.field_show_badge|naked_field %}
+{% set type             = content.field_types|naked_field %}
+{% set status           = content.field_adserver_position_status|naked_field %}
+{% set adserver_name    = content.field_adserver_position_name|naked_field %}
+
+<div {{ attributes.addClass(['promotion', 'promotion__' ~ type]).setAttribute('data-promotion-type', type) }}>
+    {% if status == 'On' %}
+
+        {% if badge == 'On' %}
+            <div class="promotion__badge">
+                <span>{% trans %}Promotion{% endtrans %}</span>
+            </div>
+        {% endif %}
+        <div class="promotion__body" id="{{ plugin_id|replace({'block_content:' : ''}) }}" data-bbelements-id="{{ adserver_name }}">
+            {{ content.body }}
+        </div>
+
+    {% endif %}
+</div>

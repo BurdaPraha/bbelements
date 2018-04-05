@@ -151,6 +151,7 @@ window.BD_Branding.prototype = {
             page_width:                 1000, // @todo: think about dynamic looking
             page_responsive_from:       980,
             element_class:              'branding_wrapper',
+            content_class:              'node__wrapper',
             tpl_shared:                 true,
             dev:                        false,
             css:                        '',
@@ -375,7 +376,7 @@ window.BD_Branding.prototype = {
     {
         el.style.background = (color ? color : '')
             + ' url("'+ this.args.ad_server.url + url +'") no-repeat top center';
-            //+ (options ? options : '');
+        //+ (options ? options : '');
     },
 
 
@@ -629,9 +630,9 @@ window.BD_Branding.prototype = {
 
         out+="" +
             "<div class='" + this.composeBEM('area') + "'>" +
-                "<a class='" + this.composeBEM('area-a') + "' href='" + this.args.ad_server.click_url + "' target='_blank'></a>" +
-            "</div>";        
-        
+            "<a class='" + this.composeBEM('area-a') + "' href='" + this.args.ad_server.click_url + "' target='_blank'></a>" +
+            "</div>";
+
 
         return out;
     },
@@ -703,32 +704,55 @@ window.BD_Branding.prototype = {
                 display:    'block',
                 outline:    'none'
             },
-            '@media(max-width: 990px)': [{
-                branding_wrapper: {
-                    display:    'none'
-                },
-                branding: {
-                    height:     'auto'
-                },
-                megaboard__mobile: {
-                    display:    'block',
-                    height:     'auto!important'
-                },
-                branding__area: {
-                    display:    'none'
-                },
-                'branding__megaboard a': {
-                    height:     'auto'
-                },
-                'branding__badge span': {
-                    opacity:    0.8
-                }
-            }]
         };
 
-        // set height for main wrapper element
+
+        var style_mobile = style['@media(max-width: ' + this.args.page_responsive_from + ')'];
+
+
+        style_mobile = [{
+            branding: {
+                height:     'auto'
+            },
+            megaboard__mobile: {
+                display:    'block',
+                height:     'auto!important'
+            },
+            branding__area: {
+                display:    'none'
+            },
+            'branding__megaboard a': {
+                height:     'auto'
+            },
+            'branding__badge span': {
+                opacity:    0.8
+            }
+        }];
+
+
+        //
+        // set styles for main wrapper element (can be variable key of)
+        //
         style[this.args.element_class] = {
-            height: this.args.tools.height
+            width:          '100%',
+            height:         this.args.tools.height,
+            display:        'block',
+            position:       'absolute',
+            'z-index':      '-1',
+            'transition':   'all .1s ease'
+        };
+
+        style_mobile[this.args.element_class] = {
+            display:    'none'
+        };
+
+
+        //
+        // content must have higher order than element class
+        //
+        style[this.args.content_class] = {
+            position:     'relative',
+            'z-index:':   '5'
         };
 
 
@@ -892,11 +916,11 @@ window.BD_Branding.prototype = {
                 while(i--){n = new Image(1,1);n.src = o[i].replace('[RANDOM]',Math.floor(
                     Math.random()*10e12));}}catch(p){}
             (window.bbCommonLib=window.bbCommonLib||(function(){var c=[],a={},e={},b
-                    =function(){},x='<script ',y='"><\/script>';function d(f){if(typeof f
-                    ==="string"&&!e[f]){document.write(x+'src="'+f+'" type="text/javascript'
-                    +y);e[f]=""}}return{extend:function(f){b=f},registerScript:function(g,f)
+                =function(){},x='<script ',y='"><\/script>';function d(f){if(typeof f
+                ==="string"&&!e[f]){document.write(x+'src="'+f+'" type="text/javascript'
+                +y);e[f]=""}}return{extend:function(f){b=f},registerScript:function(g,f)
                 {a[g]=f;b(a,c)},registerAd:function(f){var g="bb_"+(""+Math.random()).
-                        substr(2);f.options.marker=g;document.write(x+'id="'+g+'" type="marker'+
+                substr(2);f.options.marker=g;document.write(x+'id="'+g+'" type="marker'+
                     y);c.push(f);d(f.library);d(f.script);b(a,c)}}})()).registerAd(args);
         }({
             options: {
