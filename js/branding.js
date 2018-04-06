@@ -53,7 +53,7 @@ window.BD_Branding.prototype = {
         // branding types init
         this.setupTypes();
 
-        if(typeof(this.element) != 'undefined' && this.element !== null)
+        if('undefined' !== typeof(this.element) && null !== this.element)
         {
             // marketing tracking pixel
             this.createTrackingPixel();
@@ -741,26 +741,29 @@ window.BD_Branding.prototype = {
         //
         // set styles for main wrapper element (can be variable key of)
         //
-        style[this.args.element_class] = {
-            width:          '100%',
-            height:         this.args.tools.height,
-            display:        'block',
-            position:       'absolute',
-            'z-index':      '-1',
-            'transition':   'all .1s ease'
-        };
+        if(!this.element_is_body){
 
-        style_mobile[this.args.element_class] = {
-            display:    'none'
-        };
+            style[this.args.element_class] = {
+                width:          '100%',
+                height:         this.args.tools.height,
+                display:        'block',
+                position:       'absolute',
+                'z-index':      '-1',
+                'transition':   'all .1s ease'
+            };
+
+            style_mobile[this.args.element_class] = {
+                display:    'none'
+            };
+        }
 
 
         //
         // content must have higher order than element class
         //
         style[this.args.content_class] = {
-            position:     'relative',
-            'z-index:':   '5'
+          position:     'relative',
+          'z-index:':   '5'
         };
 
 
@@ -801,7 +804,8 @@ window.BD_Branding.prototype = {
          * print <img> html element
          * @param src
          */
-        var print = function(src){
+        var print = function(src)
+        {
             var p = new Image (1,1);
             p.src = prepareVariables(src);
             document.body.appendChild(p);
@@ -811,7 +815,7 @@ window.BD_Branding.prototype = {
         if(t.args.tpl_shared && t.args.pixel)
         {
             /** pixel can be in array - for example because we need our develop pixel too */
-            if(typeof t.args.pixel == 'object' && null !== t.args.pixel)
+            if('object' === typeof t.args.pixel && null !== t.args.pixel)
             {
                 var pixels = Object.keys(t.args.pixel).length;
                 for (var i=0; i < pixels; i++) {
@@ -853,8 +857,7 @@ window.BD_Branding.prototype = {
     printer: function(html)
     {
         var isIE = this.detectIE();
-
-        if(false == isIE || isIE >= 12)
+        if(!isIE || isIE >= 12)
         {
             document.currentScript.insertAdjacentHTML('beforebegin', html);
         }
@@ -946,9 +949,8 @@ window.BD_Branding.prototype = {
                 },
                 transition:             'width 0.2s ease-out'
             },
-            script : 'https://www.marianne.cz/themes/custom/marianne/js/brand/views/background-double-layer-script-1.01.js', // todo - modificated !!!
-            //script : this.args.ad_server.cd_ad_domain + '/bb/creativelib/ad-scripts/background-double-layer/background-double-layer-script-1.01.js',
-            library: t.args.ad_server.cd_ad_domain + '/bb/creativelib/creative-lib-1.02.32.min.js'
+            script:     this.args.ad_server.cd_ad_domain + '/bb/creativelib/ad-scripts/background-double-layer/background-double-layer-script-1.01.js',
+            library:    t.args.ad_server.cd_ad_domain + '/bb/creativelib/creative-lib-1.02.32.min.js'
         }));
     },
 

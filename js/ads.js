@@ -8,6 +8,7 @@ BurdaAds.prototype = {
         this.bb_all_positions   = null;
         this.branding 			= null;
         this.dev                = false;
+        this.gemius_id          = '1w.rq__3bN8bu_IugvqsX_W0HeJR2Tt_02QuZDLE9jH.q7';
 
 
         this.bb_create();
@@ -158,14 +159,13 @@ BurdaAds.prototype = {
      */
     netMonitorPV: function()
     {
-        if('undefined' !== typeof(pp_gemius_identifier))
+        if('undefined' !== typeof(gemius_hit) && 'undefined' !== typeof(this.gemius_id))
         {
-            pp_gemius_hit(pp_gemius_identifier);
-            //gemius_hit(pp_gemius_identifier)
+            gemius_hit(this.gemius_id)
         }
         else
         {
-            if(this.dev){console.warn('Gemius (NetMonitor) id not defined!');}
+            console.warn('Gemius (NetMonitor) id not defined!');
         }
     },
 
@@ -186,7 +186,7 @@ BurdaAds.prototype = {
         }
         else
         {
-            if(this.dev){console.log("No Google Tag Manager available");}
+            console.warn("No Google Tag Manager available");
         }
     },
 
