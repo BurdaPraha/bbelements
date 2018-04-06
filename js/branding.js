@@ -32,13 +32,14 @@ window.BD_Branding.prototype = {
     create: function (myOptions)
     {
         // init defaults
-        this.is_gallery      = false;
-        this.element         = null;
-        this.scroll          = {last_know_position: 0, direction: '?'};
-        this.dev             = false;
-        this.args            = {};
-        this.html            = '';
-        this.css             = '';
+        this.is_gallery             = false;
+        this.element                = null;
+        this.element_is_body        = false;
+        this.scroll                 = {last_know_position: 0, direction: '?'};
+        this.dev                    = false;
+        this.args                   = {};
+        this.html                   = '';
+        this.css                    = '';
 
         // merge objects
         this.setupArgs(myOptions);
@@ -52,7 +53,7 @@ window.BD_Branding.prototype = {
         // branding types init
         this.setupTypes();
 
-        if(typeof(this.element) != 'undefined' && this.element != null)
+        if(typeof(this.element) != 'undefined' && this.element !== null)
         {
             // marketing tracking pixel
             this.createTrackingPixel();
@@ -173,42 +174,49 @@ window.BD_Branding.prototype = {
      */
     setupTypes: function(args)
     {
-        var t = this;
-
         // allowed with superpowers
-        switch(t.args.type)
+        switch(this.args.type)
         {
             // without action
             case 'anicka':
-                t.args.creative.background_options = 'no-repeat center ' + t.args.tools.pr_height + 'px';
+                this.args.creative.background_options = 'no-repeat center ' + this.args.tools.pr_height + 'px';
                 break;
 
             // fixed bg
             case 'maruska':
-                t.scrollFixer();
-                t.args.creative.background_options = 'no-repeat top center'; //fixed ' + t.args.tools.pr_height + 'px'
+
+                if(!this.element_is_body) {
+                    this.scrollFixer();
+                    this.args.creative.background_options = 'no-repeat top center';
+                }
+                else {
+                    this.args.creative.background_options = 'no-repeat center ' + document.body.style.paddingTop + ' fixed';
+                }
+
                 break;
 
             // auto replicated
             case 'zuzanka':
-                t.args.creative.background_options = 'repeat-y center ' + t.args.tools.pr_height + 'px';
+                this.args.creative.background_options = 'repeat-y center ' + t.args.tools.pr_height + 'px';
                 break;
 
             // with HTML banner to header
             case 'amalka':
 
                 // check if valid
-                if('' == t.args.creative.megaboard.file || t.args.creative.megaboard.file.indexOf('.html') !== -1){if(t.isDev){console.warn('Please fill in creative.megaboard item file');}}
+                if(('' == this.args.creative.megaboard.file || this.args.creative.megaboard.file.indexOf('.html') !== -1) && this.isDev){
+                    console.warn('Please fill in creative.megaboard item file');
+                }
                 break;
 
             // strip - not working right now, @todo!
             case 'rozarka':
 
-                t.args.tpl_shared = false;
+                this.args.tpl_shared = false;
 
                 // valid
-                if('' == t.args.creative.first.file && t.isDev){console.warn('First creative missing!');}
-                if('' == t.args.creative.second.file && t.isDev){console.warn('Second creative missing!');}
+                if('' == this.args.creative.first.file && this.isDev){console.warn('First creative missing!');}
+                if('' == this.args.creative.second.file && this.isDev){console.warn('Second creative missing!');}
 
                 // setup
                 t.backgroundDoubleLayerLibrary(args);
@@ -219,9 +227,12 @@ window.BD_Branding.prototype = {
 
             default:
 
-                if(t.isDev){console.warn('This is type is not allowed!');}
+                if(this.isDev){console.warn('This is type is not allowed!');}
                 break;
         }
+
+        // apply background
+        this.elementAddBg();
     },
 
 
@@ -230,7 +241,7 @@ window.BD_Branding.prototype = {
      */
     scrollFixer: function()
     {
-        var t           = this;
+        var t         = this;
         var offset    = t.element.offsetTop;
 
         (function()
@@ -340,6 +351,7 @@ window.BD_Branding.prototype = {
 
         if(0 == this.element.length)
         {
+            this.element_is_body = true;
             this.element = document.body; // element fallback
 
             if(this.isDev){
@@ -354,29 +366,9 @@ window.BD_Branding.prototype = {
             console.info('our main element:', this.element);
         }
 
-        // add classes for <body>
         var bcl = document.body.classList;
-
         bcl.add(this.composeBEM(this.args.tools.class_active));
         bcl.add(this.composeBEM('type--' + this.args.type));
-
-        // apply background
-        this.elementAddBg(this.element, this.args.creative.background_color, this.args.creative.first.file, this.args.creative.background_options);
-    },
-
-
-    /**
-     * Factory for inline bg
-     * @param el
-     * @param color
-     * @param url
-     * @param options
-     */
-    elementAddBg: function (el, color, url, options)
-    {
-        el.style.background = (color ? color : '')
-            + ' url("'+ this.args.ad_server.url + url +'") no-repeat top center';
-        //+ (options ? options : '');
     },
 
 
@@ -401,6 +393,22 @@ window.BD_Branding.prototype = {
         }
 
         return target;
+    },
+
+
+    /**
+     * Factory for inline bg
+     */
+    elementAddBg: function ()
+    {
+        var bg = (this.args.creative.background_color + ' ' ? this.args.creative.background_color : '')
+            + 'url("' + this.args.ad_server.url + this.args.creative.first.file + '") '
+            + (this.args.creative.background_options ? this.args.creative.background_options : '');
+
+
+        console.log(bg);
+
+        this.element.style.background = bg;
     },
 
 
